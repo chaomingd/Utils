@@ -1,5 +1,4 @@
 function checkScrollDirection(dir,window) {
-	if (window.innerWidth < 854) return;
 	if (!this.direction) {
 		this.direction = dir;
 	}
