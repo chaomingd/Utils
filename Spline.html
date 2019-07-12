@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<style>
+	body {
+		background: #ddd;
+		text-align: center;
+	}
+</style>
+
+<body>
+	<canvas id="canvas" width="600" height="400"></canvas>
+	<script>
+		function getAllControlPoints(points) {
+			var controlPoints = [];
+			for (var i = 0; i < points.length - 2; i++) {
+				controlPoints = controlPoints.concat(getControlPoints(points[i], points[i + 1], points[i + 2], t));
+			}
+			return controlPoints;
+		}
+
+		function getControlPoints(dot0, dot1, dot2, t) {
+			//  x,y,x,y are the coordinates of the end (knot) pts of this segment
+			//  x,y is the next knot -- not connected here but needed to calculate p2
+			//  p1 is the control point calculated here, from x back toward x.
+			//  p2 is the next control point, calculated here and returned to become the 
+			//  next segment's p1.
+			//  t is the 'tension' which controls how far the control points spread.
+
+			//  Scaling factors: distances from this knot to the previous and following knots.
+			var d01 = Math.sqrt(Math.pow(dot1.x - dot0.x, 2) + Math.pow(dot1.y - dot0.y, 2));
+			var d12 = Math.sqrt(Math.pow(dot2.x - dot1.x, 2) + Math.pow(dot2.y - dot1.y, 2));
+
+			var fa = t * d01 / (d01 + d12);
+			var fb = t - fa;
+
+			var p1x = dot1.x + fa * (dot0.x - dot2.x);
+			var p1y = dot1.y + fa * (dot0.y - dot2.y);
+
+			var p2x = dot1.x - fb * (dot0.x - dot2.x);
+			var p2y = dot1.y - fb * (dot0.y - dot2.y);
+
+			return [{
+					x: p1x,
+					y: p1y
+				},
+				{
+					x: p2x,
+					y: p2y
+				}
+			]
+		}
+
+		function getColor() {
+			var r = Math.floor(Math.random() * 255);
+			var g = Math.floor(Math.random() * 255);
+			var b = Math.floor(Math.random() * 255);
+			return `rgb(${r},${g},${b})`
+		}
+
+		function drawPoint(ctx, point) {
+			ctx.beginPath();
+			ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+			ctx.strokeStyle = "#000";
+			ctx.lineWidth = 1;
+			ctx.stroke();
+
+		}
+
+		function SpLine(ctx, points, t) {
+			var controlPoints = getAllControlPoints(points, t);
+			// 中间部分 三次
+			for (var i = 1; i < points.length - 2; i++) {
+				ctx.beginPath();
+				ctx.moveTo(points[i].x, points[i].y);
+				ctx.bezierCurveTo(controlPoints[2 * i - 1].x, controlPoints[2 * i - 1].y, controlPoints[2 * i].x, controlPoints[2 *
+					i].y, points[i + 1].x, points[i + 1].y);
+				ctx.strokeStyle = "red";
+				ctx.lineWidth = 4;
+				ctx.stroke();
+			}
+			// 开头 二次
+			ctx.beginPath();
+			ctx.moveTo(points[0].x, points[0].y);
+			ctx.lineWidth = "red";
+			ctx.quadraticCurveTo(controlPoints[0].x, controlPoints[0].y, points[1].x, points[1].y);
+			ctx.stroke();
+			ctx.closePath();
+			// 结尾 二次
+			ctx.beginPath();
+			ctx.moveTo(points[points.length - 1].x, points[points.length - 1].y);
+			ctx.lineWidth = "red";
+			ctx.quadraticCurveTo(controlPoints[controlPoints.length - 1].x, controlPoints[controlPoints.length - 1].y, points[
+				points.length - 2].x, points[points.length - 2].y);
+			ctx.stroke();
+			ctx.closePath();
+			points.forEach(point => {
+				drawPoint(ctx, point);
+			});
+		}
+	</script>
+	<script>
+		var points = [{
+				x: 100,
+				y: 200
+			},
+			{
+				x: 150,
+				y: 120
+			},
+			{
+				x: 200,
+				y: 180
+			},
+			{
+				x: 250,
+				y: 300
+			},
+			{
+				x: 300,
+				y: 250
+			},
+			{
+				x: 350,
+				y: 350
+			},
+			{
+				x: 400,
+				y: 320
+			},
+			{
+				x: 450,
+				y: 190
+			},
+			{
+				x: 500,
+				y: 200
+			}
+		]
+		var t = .5;
+		var controlPoints = getAllControlPoints(points, t);
+		console.log(controlPoints);
+		window.onload = function () {
+			var canvas = document.getElementById('canvas');
+			var ctx = canvas.getContext('2d');
+			SpLine(ctx, points, t);
+			// controlPoints.forEach(point => {
+			// 	drawPoint(ctx,point);
+			// });
+		}
+	</script>
+</body>
+
+</html>
