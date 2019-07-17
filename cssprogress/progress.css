@@ -1,0 +1,90 @@
+#progress{
+    width: 100%; 
+    height: 30px;
+    /* border:1px solid #ccc; */
+    border-radius: 15px;
+    /* margin: 50px 0 0 100px; */
+    overflow: hidden;
+    box-shadow: 0 0 5px 0px #ddd inset;
+}
+
+@keyframes progress {
+	0% {
+		background-position: 0% 0%;
+	}
+	100% {
+		background-position: 142% 0%;
+	}
+}
+
+#progress span {
+    display: inline-block;
+    width: 70%;
+		height: 100%;
+		line-height: 30px;
+    background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2989d8', endColorstr='#2989d8',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+		background-color: #5cb85c;
+		background-size: 42.42640687119285px 42.42640687119285px;
+		background-position: 0% 0%;
+    text-align: center;
+		color:#fff;
+		animation: progress 5s linear infinite both;
+}
+
+
+
+#progressBar{
+	width: 80%;
+	height: 50px;
+	position: relative;
+	margin: 50px 0 0 100px;
+}
+#progressBar div{
+	width: 100%;
+	height: 10px;
+	position: absolute;
+	top:50%;
+	left: 0;
+	margin-top:-20px;
+	border:1px solid #ddd;
+	background: #ccc;
+}
+#progressBar div span{
+	position: absolute;
+	display: inline-block;
+	background: green;
+	height: 10px;
+	width: 25%;
+}
+#progressBar>span{
+	position: absolute;
+	top:0;
+	margin-top: -10px;
+	width: 40px;
+	height: 40px;
+	border:2px solid #ddd;
+	border-radius: 50%;
+	background: green;
+	margin-left: -20px;
+	color:#fff;
+}
+#progressBar>span:nth-child(1){
+	left: 0%;
+}
+#progressBar>span:nth-child(2){
+	left: 25%;
+	background:green;
+}
+#progressBar>span:nth-child(3){
+	left: 50%;
+	background:#ccc;
+}
+#progressBar>span:nth-child(4){
+	left: 75%;
+	background:#ccc;
+}
+#progressBar>span:nth-child(5){
+	left: 100%;
+	background:#ccc;
+}
