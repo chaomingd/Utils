@@ -84,15 +84,16 @@
 			ctx.clearRect(0,0,canvas.width,canvas.height);
 			ctx.setLineDash([45,10]);
 			ctx.lineDashOffset=-offset;
-			ctx.textBaseline = 'top'
+			// ctx.textBaseline = 'bottom'
 			ctx.font="52px NYTKarnak-Bold"
 			ctx.lineWidth = 1;
 			ctx.strokeStyle = '#fff'
-			ctx.strokeText('R',1,0);
+			ctx.strokeText('R',1,40);
 			ctx.lineDashOffset=-offset + 10;
-			ctx.strokeText('&',45,0);
+			ctx.strokeText('&',45,40);
 			ctx.lineDashOffset=-offset + 20;
-			ctx.strokeText('D',95,0);
+			ctx.strokeText('D',95,40);
+			console.log(ctx.measureText('R'))
 		}
 		// function march() {
 		// 	offset--;
