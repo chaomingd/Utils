@@ -74,13 +74,13 @@ class IDB {
         db.close()
       })
   }
-  deleteObjectStore (tableName) {
+  deleteObjectStore (tableName) { // 删除表
     return this.getDB()
       .then(db => {
         db.deleteObjectStore(tableName)
       })
   }
-  getValue (db, tableName, keyValue, indexCursor) {
+  getValue (db, tableName, keyValue, indexCursor) { // 获取表中某条数据
     return new Promise((resolve, reject) => {
       const store = db
         .transaction(tableName, 'readonly')
@@ -100,7 +100,7 @@ class IDB {
         return this.getValue(db, tableName, keyValue, indexCursor)
       })
   }
-  getAll (tableName) {
+  getAll (tableName) { // 获取表中所有数据
     return this.getDB()
       .then(db => {
         return new Promise((resolve, reject) => {
@@ -119,7 +119,7 @@ class IDB {
         })
       })
   }
-  update (tableName, data) {
+  update (tableName, data) { // 更新数据
     return this.getDB()
       .then(db => {
         return new Promise((resolve, reject) => {
@@ -131,7 +131,7 @@ class IDB {
         })
       })
   }
-  delete (tableName, primaryKey) {
+  delete (tableName, primaryKey) { // 删除数据
     return this.getDB()
       .then(db => {
         return new Promise((resolve, reject) => {
@@ -143,7 +143,7 @@ class IDB {
         })
       })
   }
-  handlerRequest (request, resolve, reject, resolveData) {
+  handlerRequest (request, resolve, reject, resolveData) { // 处理结构
     request.onerror = function (e) {
       reject(e)
     }
@@ -155,7 +155,7 @@ class IDB {
       resolve(data)
     }
   }
-  add (tableName, data) {
+  add (tableName, data) { // 添加一条数据
     return this.getDB()
       .then(db => {
         return new Promise((resolve, reject) => {
@@ -167,7 +167,7 @@ class IDB {
         })
       })
   }
-  save (tableName, primaryKey, data) {
+  save (tableName, primaryKey, data) { // 保存数据没有就创建 有就更新
     return this.get(tableName, primaryKey).then(res => {
       const resData = res
       if (resData) {
@@ -177,13 +177,13 @@ class IDB {
       }
     })
   }
-  clear (tableName) {
+  clear (tableName) { // 清空表
     return this.getDB()
       .then(db => {
         return db.transaction(tableName, 'readwrite').objectStore(tableName).clear()
       })
   }
-  clearAll () {
+  clearAll () { // 清空所有表
     const promises = []
     for (const k in this.store) {
       const item = this.store[k]
@@ -191,7 +191,7 @@ class IDB {
     }
     return promises
   }
-  objectStoreNames () {
+  objectStoreNames () { // 获取所有表名
     return this.getDB()
       .then(db => {
         return db.objectStoreNames

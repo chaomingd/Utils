@@ -550,6 +550,40 @@ function throttle(func, wait, options) {
 	};
 };
 
+function createFileInput (attrs = {}, {fileChange, autoTrigger} = {}) { // 生成file input 并打开文本框
+  fileChange = fileChange || function () {}
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.style.display = 'none'
+  Object.keys(attrs).forEach(key => {
+    input.setAttribute(key, attrs[key])
+  })
+  input.onchange = function (e) {
+    fileChange(e)
+    input.onchange = null
+    document.body.removeChild(input)
+  }
+  if (autoTrigger) {
+    triggerClick(input)
+  }
+  document.body.appendChild(input)
+  return input
+}
+
+function duplicate (arr, getCompare) { // 去重
+  getCompare = getCompare || (key => key)
+  const hash = {}
+  const results = []
+  arr.forEach(item => {
+    const key = getCompare(item)
+    if (!hash[key]) {
+      hash[key] = true
+      results.push(item)
+    }
+  })
+  return results
+}
+
 
 export { 
 	getPositionTop,
