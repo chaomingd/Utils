@@ -584,6 +584,123 @@ function duplicate (arr, getCompare) { // 去重
   return results
 }
 
+/**
+ * 将参数对象转为查询字符串
+*/
+export function queryString (params = {}) {
+  let query = ''
+  Object.keys(params).forEach(key => {
+    if (params[key] instanceof Array) {
+      params[key].forEach(value => {
+        query += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+      })
+    } else {
+      query += `&${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+    }
+  })
+  if (query) {
+    return query.slice(1)
+  }
+  return query
+}
+
+/**
+ * 阿拉伯数字转中文数字
+*/
+export function toChinesNum (num) {
+  const changeNum = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九']
+  const unit = ['', '十', '百', '千', '万']
+  num = parseInt(num)
+  const getWan = (temp) => {
+    const strArr = temp.toString().split('').reverse()
+    let newNum = ''
+    for (var i = 0; i < strArr.length; i++) {
+      newNum = (i === 0 && (strArr[i] * 1) === 0 ? '' : (i > 0 && (strArr[i] * 1) === 0 && (strArr[i - 1] * 1) === 0 ? '' : changeNum[strArr[i]] + ((strArr[i] * 1) === 0 ? unit[0] : unit[i]))) + newNum
+    }
+    return newNum
+  }
+  const overWan = Math.floor(num / 10000)
+  let noWan = num % 10000
+  if (noWan.toString().length < 4) { noWan = '0' + noWan }
+  return overWan ? getWan(overWan) + '万' + getWan(noWan) : getWan(num)
+}
+
+/**
+ * 获取文件扩展名
+*/
+const extReg = /[\s\S]+(\.[^.]+)/
+export function getExt (filename) {
+  const res = extReg.exec(filename)
+  if (res) return res[1]
+  return null
+}
+
+export function hexToRgb (hex, opacity) { // 十六进制颜色转rgba
+  if (hex[0] === '#') hex = hex.slice(1)
+  const hasOpacity = (opacity !== undefined && opacity !== null)
+  let r, g, b
+  if (hex.length === 3) {
+    r = Number('0x' + hex[0] + hex[0])
+    g = Number('0x' + hex[1] + hex[1])
+    b = Number('0x' + hex[2] + hex[2])
+  } else {
+    r = Number('0x' + hex.slice(0, 2))
+    g = Number('0x' + hex.slice(2, 4))
+    b = Number('0x' + hex.slice(4))
+  }
+  return hasOpacity ? `rgba(${r}, ${g}, ${b}, ${opacity})` : `rgb(${r}, ${g}, ${b})`
+}
+const hexReg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/
+export function toRgb (color, opacity) {
+  const hasOpacity = opacity !== undefined && opacity !== null
+  color = color.toLowerCase()
+  if (hexReg.test(color)) {
+    if (color.length === 4) {
+      let colorNew = '#'
+      for (let i = 1; i < 4; i += 1) {
+        colorNew += color.slice(i, i + 1).concat(color.slice(i, i + 1))
+      }
+      color = colorNew
+    }
+    const colorChange = []
+    for (let i = 1; i < 7; i += 2) {
+      colorChange.push(parseInt('0x' + color.slice(i, i + 2)))
+    }
+    return hasOpacity ? `rgba(${colorChange.join(',')}, ${opacity})` : `rgb(${colorChange.join(',')})`
+  } else {
+    return color
+  }
+}
+
+/**
+ * 将style对象解析成cssText
+*/
+const upperCaseReg = /[A-Z]/
+// 将驼峰转换成-
+function resolveStyleKey (key) {
+  return key.replace(upperCaseReg, match => '-' + match.toLowerCase())
+}
+const noUnitKeyMap = {
+  opacity: true
+}
+// 处理单位
+function resolveStyleUnit (key, value) {
+  if (noUnitKeyMap[key]) return value
+  return typeof value === 'number' ? value + 'px' : value
+}
+// 生成cssText
+export function parseStyleToCssText (style) {
+  let cssText = ''
+  const keys = Object.keys(style)
+  if (keys.length) {
+    cssText += `${resolveStyleKey(keys[0])}: ${resolveStyleUnit(keys[0], style[keys[0]])};`
+    for (let i = 1; i < keys.length; i++) {
+      cssText += ` ${resolveStyleKey(keys[i])}: ${resolveStyleUnit(keys[i], style[keys[i]])};`
+    }
+  }
+  return cssText
+}
+
 
 export { 
 	getPositionTop,
